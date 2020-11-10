@@ -15,11 +15,11 @@ from sklearn.utils import check_random_state
 from pyDOE2 import lhs
 from scipy.stats.distributions import norm
 
-from lime.discretize import QuartileDiscretizer
-from lime.discretize import DecileDiscretizer
-from lime.discretize import EntropyDiscretizer
-from lime.discretize import BaseDiscretizer
-from lime.discretize import StatsDiscretizer
+from lime.lime.discretize import QuartileDiscretizer
+from lime.lime.discretize import DecileDiscretizer
+from lime.lime.discretize import EntropyDiscretizer
+from lime.lime.discretize import BaseDiscretizer
+from lime.lime.discretize import StatsDiscretizer
 from . import explanation
 from . import lime_base
 
@@ -358,7 +358,7 @@ class LimeTabularExplainer(object):
                 metric=distance_metric
         ).ravel()
 
-        yss = predict_fn(inverse)
+        yss = predict_fn(inverse.reshape((inverse.shape[0], inverse.shape[1], 1)))
 
         # for classification, the model needs to provide a list of tuples - classes
         # along with prediction probabilities
@@ -713,7 +713,7 @@ class RecurrentTabularExplainer(LimeTabularExplainer):
         """
 
         # Flatten input so that the normal explainer can handle it
-        data_row = data_row.T.reshape(self.n_timesteps * self.n_features)
+        data_row = data_row.T.reshape((self.n_timesteps, self.n_features,1))
 
         # Wrap the classifier to reshape input
         classifier_fn = self._make_predict_proba(classifier_fn)
